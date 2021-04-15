@@ -9,6 +9,9 @@ import {
   Radio,
   Button
 } from 'antd-mobile';
+import {connect} from 'react-redux'
+import {register} from '../../redux/actions'
+import {Redirect} from 'react-router-dom'
 const ListItem = List.Item
 class Register extends React.Component {
   state = {
@@ -18,7 +21,8 @@ class Register extends React.Component {
     type: 'dashen'
   }
   register = () => {
-    console.log(this.state)
+    // console.log(this.state)
+    this.props.register(this.state)
   }
   toLogin = () => {
     this.props.history.replace('/login')
@@ -28,12 +32,17 @@ class Register extends React.Component {
   } 
   render () {
     const {type} = this.state
+    const {msg, redirectTo} = this.props.user
+    if (redirectTo) {
+      return <Redirect to={redirectTo} />
+    }
     return ( 
       <div>
         <NavBar>硅&nbsp;谷&nbsp;直&nbsp;聘</NavBar>
         <Logo />
         <WingBlank>
           <List>
+            {msg? <div className='error-msg'>{msg}</div> : null}
             <InputItem placeholder='请输入用户名' onChange={val => {this.handleChange('username',val)}}>用户名:</InputItem>
             <WhiteSpace/>
             <InputItem placeholder='请输入密码' type="password" onChange={val => {this.handleChange('password',val)}}>密&nbsp;&nbsp;&nbsp;码:</InputItem>
@@ -56,5 +65,8 @@ class Register extends React.Component {
     )
   }
 }
-
-export default Register
+export default connect(
+  state => ({user: state.user}),
+  {register}
+)(Register)
+// export default Register
